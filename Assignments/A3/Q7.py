@@ -1,40 +1,44 @@
-import string
-
-abet = list(string.ascii_lowercase)
-abetDict = {chr(i + 97): i for i in range(0, 26)}
+alphabet = {chr(i + 97): i for i in range(0, 26)}
 
 
-def letters(x):
-    text = list()
-    for index in x:
-        text.append(abet[index])
-    return text
+def indexLookup(cipherText):
+    cipherIndex = list()
+    for character in cipherText:
+        cipherIndex.append(alphabet[character])
+    return cipherIndex
 
 
-def ltable(text):
-    ptext = list()
-    for character in text:
-        # print(character, " : ", abetDict[character])
-        ptext.append(abetDict[character])
-    return ptext
+def letterLookup(cipherIndex):
+    characters = list()
+    for index in cipherIndex:
+        characters.append(list(alphabet.keys())[index])
+    return characters
 
 
-def encrypt(x, b):
-    ctext = list()
-    for num in x:
-        (q, r) = divmod(num + b, 26)
-        ctext.append(r)
-    return ctext
+def encrypt(cipherIndex, b):
+    plaintextIndex = list()
+    for index in cipherIndex:
+        (quotient, shiftedIndex) = divmod(index + b, 26)
+        plaintextIndex.append(shiftedIndex)
+    return plaintextIndex
+
+
+def search(cipherText):
+    cipherIndex = indexLookup(cipherText)
+    for i in range(1, 26, 1):
+        plainIndex = encrypt(cipherIndex, -i)
+        plainText = letterLookup(plainIndex)
+        print(i, ":", "".join(plainText))
 
 
 def main():
-    cipherText = "ufimeftqnqefarfuyqeufimeftqiadefarfuyqe"
-    # print(abetDict)
-    ctext = ltable(cipherText)
-    for i in range(0, 26, 1):
-        ptext = encrypt(ctext, -i)
-        ptext = letters(ptext)
-        print(i, ":", "".join(ptext))
+    cipherText = open("cipherText.txt", "r")
+    cipherText = cipherText.readline()
+    # print(alphabet)
+
+    for word in cipherText.split(" "):
+        print("--------", word, "---------")
+        search(word.lower())
 
 
 if __name__ == "__main__":
